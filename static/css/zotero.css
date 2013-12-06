@@ -1,0 +1,22 @@
+#insertZoteroReference >a > .buttonicon
+{
+    background-image: url('../../static/images/zotero.png');
+}
+
+.test
+{
+    color: red;
+}
+
+.modal
+{
+    top: 10%;
+    right: 30%;
+    left: 30%;
+    overflow-y: auto;
+}
+
+.modal .modal-body label
+{
+    padding-right: 20px;
+}

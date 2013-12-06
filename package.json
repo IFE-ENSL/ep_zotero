@@ -1,0 +1,20 @@
+{
+  "name": "ep_zotero",
+  "version": "0.0.1",
+  "keywords": [
+    "zotero",
+    "button",
+    "bibliography"
+  ],
+  "description": "Add a zotero button to the toolbar, to search in a zotero gallery and insert a reference.",
+  "contributors": [
+    {
+      "name": "Baptiste Bouchereau",
+      "email": "baptiste.bouchereau@idci-consulting.fr"
+    }
+  ],
+  "dependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
