@@ -38,3 +38,8 @@
     max-height: 330px;
     overflow: auto;
 }
+
+.modal-dialog
+{
+    width: auto;
+}

@@ -18,11 +18,6 @@ jQuery(document).ready(function () {
     });
 });
 
-
-function requestZoteroApi(apiUserId, apiUserKey) {
-    
-}
-
 function createApiZoteroFormModal() {
     // create the modal
     var $formModal = jQuery(
@@ -45,8 +40,8 @@ function createApiZoteroFormModal() {
     // create the form
     var $apiZoteroForm = jQuery(
         '<form>'+
-            '<label>Votre identifiant API</label><input type="text" name="user_api_id"/><br />'+
-            '<label>Votre clé API</label><input type="text" name="user_api_key"/>'+
+            '<label>Votre identifiant API</label><input type="text" name="user_api_id" value="1714010"/><br />'+
+            '<label>Votre clé API</label><input type="text" name="user_api_key" value="Dm8ucI67hW83jEY5Ah1aypoD"/>'+
         '</form>'
     );
     $formModal.find('.modal-body').append($apiZoteroForm);
@@ -126,19 +121,33 @@ function createErrorModal() {
 
 function createSuccessModal(xml) {
     // create the insert button
-    var $insertButton = jQuery('');
-
-    var table = '<table class="table table-striped">';
-    jQuery(xml).find("title").each(function(index) {
-        console.log(index+": "+ $(this).text() );
-        table +=
+    console.log(xml);
+    var table = '<table class="table table-striped">'+
+        '<thead>'+
             '<tr>'+
-                '<td>'+index+'</td>'+
-                '<td>'+$(this).text()+'</td>'+
-                '<td><button type="button" class="btn btn-primary" data-id="">insert</button></td>'+
-            '</tr>';
+                '<td>Titre</td>'+
+                '<td>Auteur</td>'+
+                '<td colspan="2">date</td>'+
+            '</tr>'+
+        '</thead>'+
+        '<tbody>';
+    jQuery(xml).find("entry").each(function(index) {
+        var itemType = jQuery(this).find('zapi\\:itemType, itemType').text();
+        if (itemType == 'encyclopediaArticle') {
+            var itemTitle = jQuery(this).find('title').text();
+            var date = jQuery(this).find('published').text();
+            var splittedDate = date.split('T');
+            date = splittedDate[0];
+            table +=
+                '<tr>'+
+                    '<td>'+itemTitle+'</td>'+
+                    '<td><em>author here</em></td>'+
+                    '<td>'+date+'</td>'+
+                    '<td><button type="button" class="btn btn-primary" data-id="">insert</button></td>'+
+                '</tr>';
+        }
     });
-    table += '</table>';
+    table += '</tbody></table>';
     // create the modal
     var $modal = jQuery(
         '<div class="modal fade" id="success-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
