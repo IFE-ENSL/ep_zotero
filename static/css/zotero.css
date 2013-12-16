@@ -1,4 +1,4 @@
-#insertZoteroReference >a > .buttonicon
+.zoteroButton >a > .buttonicon
 {
     background-image: url('../../static/images/zotero.png');
 }

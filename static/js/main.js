@@ -10,26 +10,36 @@
 */
 
 jQuery(document).ready(function () {
-    loadFormModal();
+    loadApiZoteroFormModal();
+    loadErrorModal();
 
-    // display the formmodal on click
-    jQuery("#insertZoteroReference").click(function () {
+    // display the form-modal on click
+    jQuery(".zoteroButton").click(function () {
+        jQuery('#error-modal').modal('hide');
         jQuery('#form-modal').modal();
     });
 
     // attempt an ajax request on click on the modal validation button
     jQuery("#zoteroRequestButton").click(function () {
-        var apiUserId = document.getElementById('user_api_id').value; //1714010
-        var apiUserKey = document.getElementById('user_api_key').value; //Dm8ucI67hW83jEY5Ah1aypoD
         event.preventDefault();
+        var apiUserId = document.getElementById('user_api_id').value;   //1714010
+        var apiUserKey = document.getElementById('user_api_key').value; //Dm8ucI67hW83jEY5Ah1aypoD
         requestZoteroApi(apiUserId, apiUserKey);
         console.log(apiUserId);
         console.log(apiUserKey);
     });
+
+    // Close modals on click
+    $("button[data-close=form]").click(function(){
+        $('#form-modal').modal('hide');
+    });
+
+    $("button[data-close=error]").click(function(){
+        $('#error-modal').modal('hide');
+    });
 });
 
-function loadFormModal() {
-    jQuery('.modal').remove();
+function loadApiZoteroFormModal() {
         jQuery('body').append('\
             <div class="modal fade" id="form-modal" role="dialog" aria-labelledby="success" aria-hidden="true">\
                 <div class="modal-dialog">\
@@ -43,8 +53,31 @@ function loadFormModal() {
                             <label>Votre clé API</label><input type="text" name="user_api_key" id="user_api_key"/>\
                         </div>\
                         <div class="modal-footer">\
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>\
+                            <button type="button" class="btn btn-default" data-close="form">Close</button>\
                             <button type="button" class="btn btn-primary" id="zoteroRequestButton">Validate</button>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>\
+    ');
+}
+
+function loadErrorModal() {
+        jQuery('body').append('\
+            <div class="modal fade" id="error-modal" role="dialog" aria-labelledby="error" aria-hidden="true">\
+                <div class="modal-dialog">\
+                    <div class="modal-content">\
+                        <div class="modal-header">\
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
+                            <h4 class="modal-title" id="error">Error</h4>\
+                        </div>\
+                        <div class="modal-body">\
+                            error\
+                        </div>\
+                        <div class="modal-footer">\
+                            <button type="button" class="btn btn-default" data-close="error">Close</button>\
+                            <button type="button" class="btn btn-primary zoteroButton">Retry</button>\
                         </div>\
                     </div>\
                 </div>\
@@ -65,7 +98,8 @@ function requestZoteroApi(apiUserId, apiUserKey) {
         
     })
     .error(function(jqXHR, desc, errorThrown){
-        alert("not cool");
+        jQuery('#form-modal').modal('hide');
+        jQuery('#error-modal').modal('show');
     });
 }
 
