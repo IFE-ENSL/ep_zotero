@@ -9,8 +9,10 @@
     });
 */
 
+/**
+ * Launch the form modal on click
+ */
 jQuery(document).ready(function () {
-    // display the form-modal on click
     jQuery(".zoteroButton").on('click', function () {
         var $formModal = createApiZoteroFormModal();
         jQuery('body').append($formModal);
@@ -18,8 +20,10 @@ jQuery(document).ready(function () {
     });
 });
 
+/**
+ * Create the from modal to query the api
+ */
 function createApiZoteroFormModal() {
-    // create the modal
     var $formModal = jQuery(
         '<div class="modal fade" role="dialog" aria-labelledby="success" aria-hidden="true">'+
             '<div class="modal-dialog">'+
@@ -63,6 +67,8 @@ function createApiZoteroFormModal() {
             $successModal = createSuccessModal(xml);
             jQuery('body').append($successModal);
             $successModal.modal();
+            var options = { valueNames: ['author', 'title'] };
+            var modalList = new List('modal-list', options);
         })
         .error(function(jqXHR, desc, errorThrown){
             $formModal.modal('hide');
@@ -79,6 +85,9 @@ function createApiZoteroFormModal() {
     return $formModal;
 }
 
+/**
+ * Create the error modal
+ */
 function createErrorModal() {
     // create the modal
     var $modal = jQuery(
@@ -119,36 +128,12 @@ function createErrorModal() {
     return $modal;
 }
 
+/**
+ * Create the success modal from the xml
+ */
 function createSuccessModal(xml) {
-    // create the insert button
     console.log(xml);
-    var table = '<table class="table table-striped">'+
-        '<thead>'+
-            '<tr>'+
-                '<td>Titre</td>'+
-                '<td>Auteur</td>'+
-                '<td colspan="2">date</td>'+
-            '</tr>'+
-        '</thead>'+
-        '<tbody>';
-    jQuery(xml).find("entry").each(function(index) {
-        var itemType = jQuery(this).find('zapi\\:itemType, itemType').text();
-        if (itemType == 'encyclopediaArticle') {
-            var itemTitle = jQuery(this).find('title').text();
-            var date = jQuery(this).find('published').text();
-            var splittedDate = date.split('T');
-            date = splittedDate[0];
-            table +=
-                '<tr>'+
-                    '<td>'+itemTitle+'</td>'+
-                    '<td><em>author here</em></td>'+
-                    '<td>'+date+'</td>'+
-                    '<td><button type="button" class="btn btn-primary" data-id="">insert</button></td>'+
-                '</tr>';
-        }
-    });
-    table += '</tbody></table>';
-    // create the modal
+    
     var $modal = jQuery(
         '<div class="modal fade" id="success-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
             '<div class="modal-dialog">'+
@@ -157,9 +142,7 @@ function createSuccessModal(xml) {
                         '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
                         '<h4 class="modal-title" id="success">Insérer votre référence</h4>'+
                     '</div>'+
-                    '<div class="modal-body">'+
-                        table +
-                    '</div>'+
+                    '<div class="modal-body"></div>'+
                     '<div class="modal-footer">'+
                         '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
                     '</div>'+
@@ -168,10 +151,108 @@ function createSuccessModal(xml) {
         '</div>'
     );
 
+    // create the list of references
+    var list = createZoteroReferencesList(xml);
+    $modal.find('.modal-body').append(list);
+
     $modal.on('hidden.bs.modal', function (e) {
         jQuery(this).remove();
     });
 
     return $modal;
 }
+
+/**
+ * Create the list with zotero references from the xml
+ */
+function createZoteroReferencesList(xml) {
+    var list =
+        '<div id="modal-list">'+
+            '<input class="search" />'+
+            '<button class="sort btn-primary" data-sort="title">Sort by title</button>'+
+            '<button class="sort btn-primary" data-sort="author">Sort by author</button>'+
+            '<table class="table table-striped">'+
+                '<thead>'+
+                    '<tr>'+
+                        '<td>Titre</td>'+
+                        '<td>Auteur</td>'+
+                        '<td colspan="2">date</td>'+
+                    '</tr>'+
+                '</thead>'+
+                '<tbody class="list">'
+    ;
+
+    jQuery(xml).find("entry").each(function() {
+        // get the needed info from the xml
+        var itemType = jQuery(this).find('zapi\\:itemType, itemType').text();
+        // only handle entries with the encyclopediaArticle type
+        if (itemType == 'encyclopediaArticle') {
+            var entryTitle = getEntryTitle(this);
+            var date = getEntryDate(this);
+            var authorName = getEntryAuthorName(this);
+            // add a row to the table
+            list +=
+                '<tr>'+
+                    '<td class="title">'+entryTitle+'</td>'+
+                    '<td class="author">'+authorName+'</td>'+
+                    '<td>'+date+'</td>'+
+                    '<td><button type="button" class="btn btn-primary" data-id="">insert</button></td>'+
+                '</tr>';
+        }
+    });
+
+    // close the list
+    list += '</tbody></table></div>';
+
+    return list;
+}
+
+
+/**
+ * Get the entry title
+ * Fixes errors when the text contains single quote & remove html tags from titles
+ */
+function getEntryTitle(entry) {
+    var entryTitle = jQuery(entry).find('title').text();
+    // 
+    var cleanEntryTitle = jQuery(entryTitle.replace("\'","\\\'")).text();
+
+    if (cleanEntryTitle != '') {
+        return cleanEntryTitle;
+    } else {
+        return entryTitle;
+    }
+}
+
+/**
+ * Get the entry date
+ * Format the existing date
+ */
+function getEntryDate(entry) {
+    var date = jQuery(entry).find('published').text();
+    var splittedDate = date.split('T');
+
+    return splittedDate[0];
+}
+
+/**
+ * Get the entry author
+ */
+function getEntryAuthorName(entry) {
+    var authorName = jQuery(entry).find('author').first().find('name').first().text();
+
+    return authorName;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
