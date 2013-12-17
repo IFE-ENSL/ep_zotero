@@ -24,6 +24,8 @@ jQuery(document).ready(function () {
  * Create the from modal to query the api
  */
 function createApiZoteroFormModal() {
+
+    // create the modal
     var $formModal = jQuery(
         '<div class="modal fade" role="dialog" aria-labelledby="success" aria-hidden="true">'+
             '<div class="modal-dialog">'+
@@ -67,7 +69,7 @@ function createApiZoteroFormModal() {
             $successModal = createSuccessModal(xml);
             jQuery('body').append($successModal);
             $successModal.modal();
-            var options = { valueNames: ['author', 'title'] };
+            var options = { valueNames: ['author', 'title', 'date'] };
             var modalList = new List('modal-list', options);
         })
         .error(function(jqXHR, desc, errorThrown){
@@ -89,6 +91,7 @@ function createApiZoteroFormModal() {
  * Create the error modal
  */
 function createErrorModal() {
+
     // create the modal
     var $modal = jQuery(
         '<div class="modal fade" id="error-modal" role="dialog" aria-labelledby="error" aria-hidden="true">'+
@@ -132,8 +135,8 @@ function createErrorModal() {
  * Create the success modal from the xml
  */
 function createSuccessModal(xml) {
-    console.log(xml);
-    
+
+    // create the modal
     var $modal = jQuery(
         '<div class="modal fade" id="success-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
             '<div class="modal-dialog">'+
@@ -152,8 +155,65 @@ function createSuccessModal(xml) {
     );
 
     // create the list of references
-    var list = createZoteroReferencesList(xml);
-    $modal.find('.modal-body').append(list);
+    var $list = jQuery('<div id="modal-list"></div>');
+    $list.append(jQuery(
+        '<input class="search" />'+
+        '<button class="sort btn-primary" data-sort="title">Sort by title</button>'+
+        '<button class="sort btn-primary" data-sort="author">Sort by author</button>'+
+        '<button class="sort btn-primary" data-sort="date">Sort by date</button>'+
+        '<table class="table table-striped">'+
+            '<thead>'+
+                '<tr>'+
+                    '<td>Titre</td>'+
+                    '<td>Auteur</td>'+
+                    '<td colspan="2">date</td>'+
+                '</tr>'+
+            '</thead>'+
+            '<tbody class="list"></tbody>'+
+        '</table>'
+    ));
+
+    // add rows to the table
+    jQuery(xml).find("entry").each(function(index) {
+
+        // only handle entries with the encyclopediaArticle type
+        var itemType = getEntryItemType(this);
+        if (itemType == 'encyclopediaArticle') {
+
+            // get the needed info from xml
+            var entryTitle = getEntryTitle(this);
+            var date = getEntryDate(this);
+            var authorName = getEntryAuthorName(this);
+            var itemKey = getEntryItemKey(this);
+
+            // add a row
+            $list.find('tbody.list').append(
+                '<tr>'+
+                    '<td class="title">'+entryTitle+'</td>'+
+                    '<td class="author">'+authorName+'</td>'+
+                    '<td class="date">'+date+'</td>'+
+                '</tr>'
+            );
+
+            // create the insert button
+            var $insertButton = jQuery('<td><button type="button" class="btn btn-primary insert_reference" data-key="'+itemKey+'">insert</button></td>');
+            $list.find('tbody.list').find('tr').last().append($insertButton);
+
+            // insert the reference on click
+            $insertButton.on('click', function () {
+                var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
+                return padeditor.ace.callWithAce(function (ace) {
+                    // rep contains informations about the cursor location
+                    rep = ace.ace_getRep();
+                    // insert the reference at the cursor location
+                    ace.ace_replaceRange(rep.selStart, rep.selStart, "["+entryTitle+": Référence "+itemKey+"]");
+                });
+                $modal.modal('hide');
+            });
+        }
+    });
+
+    $modal.find('.modal-body').append($list);
 
     $modal.on('hidden.bs.modal', function (e) {
         jQuery(this).remove();
@@ -161,52 +221,6 @@ function createSuccessModal(xml) {
 
     return $modal;
 }
-
-/**
- * Create the list with zotero references from the xml
- */
-function createZoteroReferencesList(xml) {
-    var list =
-        '<div id="modal-list">'+
-            '<input class="search" />'+
-            '<button class="sort btn-primary" data-sort="title">Sort by title</button>'+
-            '<button class="sort btn-primary" data-sort="author">Sort by author</button>'+
-            '<table class="table table-striped">'+
-                '<thead>'+
-                    '<tr>'+
-                        '<td>Titre</td>'+
-                        '<td>Auteur</td>'+
-                        '<td colspan="2">date</td>'+
-                    '</tr>'+
-                '</thead>'+
-                '<tbody class="list">'
-    ;
-
-    jQuery(xml).find("entry").each(function() {
-        // get the needed info from the xml
-        var itemType = jQuery(this).find('zapi\\:itemType, itemType').text();
-        // only handle entries with the encyclopediaArticle type
-        if (itemType == 'encyclopediaArticle') {
-            var entryTitle = getEntryTitle(this);
-            var date = getEntryDate(this);
-            var authorName = getEntryAuthorName(this);
-            // add a row to the table
-            list +=
-                '<tr>'+
-                    '<td class="title">'+entryTitle+'</td>'+
-                    '<td class="author">'+authorName+'</td>'+
-                    '<td>'+date+'</td>'+
-                    '<td><button type="button" class="btn btn-primary" data-id="">insert</button></td>'+
-                '</tr>';
-        }
-    });
-
-    // close the list
-    list += '</tbody></table></div>';
-
-    return list;
-}
-
 
 /**
  * Get the entry title
@@ -244,15 +258,21 @@ function getEntryAuthorName(entry) {
     return authorName;
 }
 
+/**
+ * Get the item key of an entry
+ */
+function getEntryItemKey(entry) {
+    var itemKey = jQuery(entry).find('zapi\\:key, key').text();
 
+    return itemKey;
+}
 
+/**
+ * Get the item type of an entry
+ */
+function getEntryItemType(entry) {
+    var itemType = jQuery(entry).find('zapi\\:itemType, itemType').text();
 
-
-
-
-
-
-
-
-
+    return itemType;
+}
 
