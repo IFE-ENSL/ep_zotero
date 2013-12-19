@@ -27,6 +27,11 @@
     padding: 0 12px;
 }
 
+.modal .ajax-loading
+{
+    background: url("/static/plugins/ep_zotero/static/images/ajax-loader.gif") no-repeat 600px 35px;
+}
+
 /* Bootstrap fixes */
 
 .toolbar

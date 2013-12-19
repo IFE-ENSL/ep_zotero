@@ -30,7 +30,7 @@
     // jQuery in the pad_editor
 
     var $pad = jQuery("[name='ace_outer']").contents().find("[name='ace_inner']").contents().find("#innerdocbody");
-    $pad.find(...);
+    $pad.find("span:contains('ZoteroKey')").attr("class", "ok");
 */
 
 /**
@@ -80,8 +80,10 @@ function createApiZoteroFormModal() {
     var $apiCallButton = jQuery('<button type="button" class="btn btn-primary">Validate</button>');
     $formModal.find('.modal-footer').append($apiCallButton);
 
-    // attempt an ajax request on click on the modal validation button
     $apiCallButton.on('click', function() {
+        // set the ajax-loader
+        $formModal.find('.modal-body').addClass("ajax-loading");
+        // attempt an ajax request
         var apiUserId = $apiZoteroForm.find('*[name="user_api_id"]').val();   // 1714010
         var apiUserKey = $apiZoteroForm.find('*[name="user_api_key"]').val(); // Dm8ucI67hW83jEY5Ah1aypoD
         var url = "https://api.zotero.org/users/"+apiUserId+"/items?key="+apiUserKey;
@@ -209,6 +211,7 @@ function createSuccessModal(xml) {
             var date = getEntryDate(this);
             var authorName = getEntryAuthorName(this);
             var itemKey = getEntryItemKey(this);
+            var url = getEntryUrl(this);
 
             // add a row
             $list.find('tbody.list').append(
@@ -226,12 +229,13 @@ function createSuccessModal(xml) {
             // insert the reference on click
             $insertButton.on('click', function () {
                 var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
-                return padeditor.ace.callWithAce(function (ace) {
+                padeditor.ace.callWithAce(function (ace) {
                     // rep contains informations about the cursor location
                     rep = ace.ace_getRep();
                     // insert the reference at the cursor location
-                    var text = "[#"+entryTitle+": ZoteroKey "+itemKey+"#]";
+                    var text = "[ZoteroKey"+itemKey+"]";
                     ace.ace_replaceRange(rep.selStart, rep.selStart, text);
+                    console.log(ace);
                     $modal.modal('hide');
                 });
             });
@@ -300,4 +304,14 @@ function getEntryItemType(entry) {
 
     return itemType;
 }
+
+/**
+ * Get the url type of an entry
+ */
+function getEntryUrl(entry) {
+    var url = jQuery(entry).find('content tr.url td').text();
+
+    return url;
+}
+
 
