@@ -29,7 +29,11 @@
 
 .modal .ajax-loading
 {
-    background: url("/static/plugins/ep_zotero/static/images/ajax-loader.gif") no-repeat 600px 35px;
+    background: url("/static/plugins/ep_zotero/static/images/ajax-loader.gif") no-repeat 344px;
+}
+.modal .groups-libraries
+{
+    margin-top: 20px;
 }
 
 /* Bootstrap fixes */

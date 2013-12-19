@@ -37,6 +37,10 @@
  * Launch the form modal on click
  */
 jQuery(document).ready(function () {
+    // global variables
+    zoteroGroupId = '';
+    zoteroApiUserId = '1714010';
+    zoteroApiUserKey = 'Dm8ucI67hW83jEY5Ah1aypoD';
     jQuery(".zoteroButton").on('click', function () {
         var $formModal = createApiZoteroFormModal();
         jQuery('body').append($formModal);
@@ -44,212 +48,26 @@ jQuery(document).ready(function () {
     });
 });
 
+// UTILS
+
 /**
- * Create the from modal to query the api
+ * Has Top collections
+ * Check whether or not a top collection has collections
  */
-function createApiZoteroFormModal() {
-
-    // create the modal
-    var $formModal = jQuery(
-        '<div class="modal fade" role="dialog" aria-labelledby="success" aria-hidden="true">'+
-            '<div class="modal-dialog">'+
-                '<div class="modal-content">'+
-                    '<div class="modal-header">'+
-                        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
-                        '<h4 class="modal-title" id="success">Récupérer vos références bibliographiques</h4>'+
-                    '</div>'+
-                    '<div class="modal-body"></div>'+
-                    '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                    '</div>'+
-                '</div>'+
-            '</div>'+
-        '</div>'
-    );
-
-    // create the form
-    var $apiZoteroForm = jQuery(
-        '<form>'+
-            '<label>Votre identifiant API</label><input type="text" name="user_api_id" value="1714010"/><br />'+
-            '<label>Votre clé API</label><input type="text" name="user_api_key" value="Dm8ucI67hW83jEY5Ah1aypoD"/>'+
-        '</form>'
-    );
-    $formModal.find('.modal-body').append($apiZoteroForm);
-
-    // create the validation button
-    var $apiCallButton = jQuery('<button type="button" class="btn btn-primary">Validate</button>');
-    $formModal.find('.modal-footer').append($apiCallButton);
-
-    $apiCallButton.on('click', function() {
-        // set the ajax-loader
-        $formModal.find('.modal-body').addClass("ajax-loading");
-        // attempt an ajax request
-        var apiUserId = $apiZoteroForm.find('*[name="user_api_id"]').val();   // 1714010
-        var apiUserKey = $apiZoteroForm.find('*[name="user_api_key"]').val(); // Dm8ucI67hW83jEY5Ah1aypoD
-        var url = "https://api.zotero.org/users/"+apiUserId+"/items?key="+apiUserKey;
-        jQuery.ajax({
-            url : url
-        })
-        .success(function(xml){
-            $formModal.modal('hide');
-            $successModal = createSuccessModal(xml);
-            jQuery('body').append($successModal);
-            $successModal.modal();
-            var options = { valueNames: ['author', 'title', 'date'] };
-            var modalList = new List('modal-list', options);
-        })
-        .error(function(jqXHR, desc, errorThrown){
-            $formModal.modal('hide');
-            $errorModal = createErrorModal();
-            jQuery('body').append($errorModal);
-            $errorModal.modal();
-        });
-    });
-
-    $formModal.on('hidden.bs.modal', function (e) {
-        jQuery(this).remove();
-    });
-
-    return $formModal;
+function hasTopCollections(xml) {
+    return jQuery(xml).has("entry").length > 0;
 }
 
 /**
- * Create the error modal
+ * Has collections
+ * Check whether or collection has sub-collections
  */
-function createErrorModal() {
+function hasSubCollections(entry) {
+    var collectionNumber = jQuery(entry).find('zapi\\:numCollections, numCollections').text();
 
-    // create the modal
-    var $modal = jQuery(
-        '<div class="modal fade" id="error-modal" role="dialog" aria-labelledby="error" aria-hidden="true">'+
-            '<div class="modal-dialog">'+
-                '<div class="modal-content">'+
-                    '<div class="modal-header">'+
-                        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
-                        '<h4 class="modal-title" id="error">Une erreur est survenue</h4>'+
-                    '</div>'+
-                    '<div class="modal-body">'+
-                        'error'+
-                    '</div>'+
-                    '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                    '</div>'+
-                '</div>'+
-            '</div>'+
-        '</div>'
-    );
-
-    // create the retry button
-    var $retryButton = jQuery('<button type="button" class="btn btn-primary">Retry</button>');
-    $modal.find('.modal-footer').append($retryButton);
-
-    // display the form-modal on click on retry
-    $retryButton.on('click', function () {
-        $modal.modal('hide');
-        var $formModal = createApiZoteroFormModal();
-        jQuery('body').append($formModal);
-        $formModal.modal();
-    });
-
-    $modal.on('hidden.bs.modal', function (e) {
-        jQuery(this).remove();
-    });
-
-    return $modal;
+    return parseInt(collectionNumber) > 0;
 }
 
-/**
- * Create the success modal from the xml
- */
-function createSuccessModal(xml) {
-    console.log(xml);
-    // create the modal
-    var $modal = jQuery(
-        '<div class="modal fade" id="success-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
-            '<div class="modal-dialog">'+
-                '<div class="modal-content">'+
-                    '<div class="modal-header">'+
-                        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
-                        '<h4 class="modal-title" id="success">Insérer votre référence</h4>'+
-                    '</div>'+
-                    '<div class="modal-body"></div>'+
-                    '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-                    '</div>'+
-                '</div>'+
-            '</div>'+
-        '</div>'
-    );
-
-    // create the list of references
-    var $list = jQuery('<div id="modal-list"></div>');
-    $list.append(jQuery(
-        '<input class="search" />'+
-        '<button class="sort btn-primary" data-sort="title">Sort by title</button>'+
-        '<button class="sort btn-primary" data-sort="author">Sort by author</button>'+
-        '<button class="sort btn-primary" data-sort="date">Sort by date</button>'+
-        '<table class="table table-striped">'+
-            '<thead>'+
-                '<tr>'+
-                    '<td>Titre</td>'+
-                    '<td>Auteur</td>'+
-                    '<td colspan="2">date</td>'+
-                '</tr>'+
-            '</thead>'+
-            '<tbody class="list"></tbody>'+
-        '</table>'
-    ));
-
-    // add rows to the table
-    jQuery(xml).find("entry").each(function(index) {
-
-        // only handle entries with the encyclopediaArticle type
-        var itemType = getEntryItemType(this);
-        if (itemType == 'encyclopediaArticle') {
-
-            // get the needed info from xml
-            var entryTitle = getEntryTitle(this);
-            var date = getEntryDate(this);
-            var authorName = getEntryAuthorName(this);
-            var itemKey = getEntryItemKey(this);
-            var url = getEntryUrl(this);
-
-            // add a row
-            $list.find('tbody.list').append(
-                '<tr>'+
-                    '<td class="title">'+entryTitle+'</td>'+
-                    '<td class="author">'+authorName+'</td>'+
-                    '<td class="date">'+date+'</td>'+
-                '</tr>'
-            );
-
-            // create the insert button
-            var $insertButton = jQuery('<td><button type="button" class="btn btn-primary insert_reference" data-key="'+itemKey+'">insert</button></td>');
-            $list.find('tbody.list').find('tr').last().append($insertButton);
-
-            // insert the reference on click
-            $insertButton.on('click', function () {
-                var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
-                padeditor.ace.callWithAce(function (ace) {
-                    // rep contains informations about the cursor location
-                    rep = ace.ace_getRep();
-                    // insert the reference at the cursor location
-                    var text = "[ZoteroKey"+itemKey+"]";
-                    ace.ace_replaceRange(rep.selStart, rep.selStart, text);
-                    console.log(ace);
-                    $modal.modal('hide');
-                });
-            });
-        }
-    });
-
-    $modal.find('.modal-body').append($list);
-
-    $modal.on('hidden.bs.modal', function (e) {
-        jQuery(this).remove();
-    });
-
-    return $modal;
-}
 
 /**
  * Get the entry title
@@ -257,8 +75,7 @@ function createSuccessModal(xml) {
  */
 function getEntryTitle(entry) {
     var entryTitle = jQuery(entry).find('title').text();
-    // 
-    var cleanEntryTitle = jQuery(entryTitle.replace("\'","\\\'")).text();
+    var cleanEntryTitle = entryTitle.replace("\'","\\\'");
 
     if (cleanEntryTitle != '') {
         return cleanEntryTitle;
@@ -314,4 +131,11 @@ function getEntryUrl(entry) {
     return url;
 }
 
+/**
+ * Get the id of the groupe of an entry
+ */
+function getEntryGroupId(entry) {
+    var groupId = jQuery(entry).find('zapi\\:groupID, groupID').text();
 
+    return groupId;
+}
