@@ -1,9 +1,10 @@
 /**
- * Create the choice modal (choice between groups librairies and user library)
+ * Create the choice modal
+ * 
+ * The user can choose between groups librairies and his own library
  */
 function createChoiceModal(xml) {
 
-    console.log(xml);
     // create the modal
     var $modal = jQuery(
         '<div class="modal fade" id="choice-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
@@ -18,7 +19,7 @@ function createChoiceModal(xml) {
                         '<div class="groups-libraries"><h4>Bibliothèques de groupes</h4></div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                        '<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>'+
                     '</div>'+
                 '</div>'+
             '</div>'+
@@ -28,37 +29,33 @@ function createChoiceModal(xml) {
     /**
      * Load the appropriate modal
      * 
-     * If the xml contains entries, there are collection and we load the collection modal
+     * If the xml contains entries, there are collections so we load the collection modal
      * Else we load the items modal to display items directly
      */
-    function loadAppropriateModal(url, xml) {
-        if (hasTopCollections(xml)) {
-            $modal.modal('hide');
-            // if there are collections we send them
-            console.log("has collection");
-            $collectionModal = createCollectionModal(xml);
+    function loadAppropriateModal(userType, url, xml) {
+        if (hasCollections(xml)) { // we get the collection modal
+            $collectionModal = createCollectionModal(userType, xml);
             jQuery('body').append($collectionModal);
+            $modal.modal('hide');
             $collectionModal.modal();
-        } else {
-            // else we get the items
-            console.log("has no collection");
+        } else { // we get the items
             url = url.replace('collections/top', 'items');
             jQuery.ajax({
                 url : url
             })
             .success(function(xml){
-                $modal.modal('hide');
                 // we need the items modal
                 $itemsModal = createItemsModal(xml);
                 jQuery('body').append($itemsModal);
                 var options = { valueNames: ['author', 'title', 'date'] };
                 var modalList = new List('modal-list', options);
+                $modal.modal('hide');
                 $itemsModal.modal();
             })
             .error(function(jqXHR, desc, errorThrown){
-                $modal.modal('hide');
                 $errorModal = createErrorModal();
                 jQuery('body').append($errorModal);
+                $modal.modal('hide');
                 $errorModal.modal();
             });
         }
@@ -73,12 +70,11 @@ function createChoiceModal(xml) {
         $modal.find('.modal-footer').addClass("ajax-loading");
         // collection or items
         var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/collections/top?key="+zoteroApiUserKey;
-        console.log(url);
         jQuery.ajax({
             url : url
         })
         .success(function(xml){
-            loadAppropriateModal(url, xml);
+            loadAppropriateModal("users", url, xml);
         })
         .error(function(jqXHR, desc, errorThrown){
             $modal.modal('hide');
@@ -113,13 +109,13 @@ function createChoiceModal(xml) {
         // ajax request on click
         $browseButton.on('click', function () {
             $modal.find('.modal-footer').addClass("ajax-loading");
+            zoteroGroupId = jQuery(this).attr("data-group-id");
             var url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/top";
-            console.log(url);
             jQuery.ajax({
                 url : url
             })
             .success(function(xml){
-                loadAppropriateModal(url, xml);
+                loadAppropriateModal("groups", url, xml);
             })
             .error(function(jqXHR, desc, errorThrown){
                 $modal.modal('hide');

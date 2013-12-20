@@ -14,7 +14,7 @@ function createApiZoteroFormModal() {
                     '</div>'+
                     '<div class="modal-body"></div>'+
                     '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                        '<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>'+
                     '</div>'+
                 '</div>'+
             '</div>'+
@@ -41,7 +41,6 @@ function createApiZoteroFormModal() {
         zoteroApiUserId = $apiZoteroForm.find('*[name="user_api_id"]').val();   // 1714010
         zoteroApiUserKey = $apiZoteroForm.find('*[name="user_api_key"]').val(); // Dm8ucI67hW83jEY5Ah1aypoD
         var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/groups?key="+zoteroApiUserKey;
-        console.log(url);
         jQuery.ajax({
             url : url
         })

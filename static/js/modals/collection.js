@@ -1,13 +1,10 @@
 /**
- * Create
+ * Create the collection modal
+ * 
  * This modal is used to get what is in a collection (others collections or items)
  */
+function createCollectionModal(userType, xml) {
 
-//numCollections
-
-function createCollectionModal(xml) {
-    //xml = list of collections or nothing?
-    console.log(xml);
     // create the modal
     var $modal = jQuery(
         '<div class="modal fade" id="success-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
@@ -51,30 +48,29 @@ function createCollectionModal(xml) {
 
         $button.on('click', function () {
             $modal.find('.modal-footer').addClass("ajax-loading");
-            // sub collection or items
-            var url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/"+itemKey+"/collections";
-            console.log(url);
+            var url = "error";
+            if (userType == "groups") {
+                url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/"+itemKey+"/collections";
+            } else if (userType == "users") {
+                url = "https://api.zotero.org/users/"+zoteroApiUserId+"/collections/"+itemKey+"/collections?key="+zoteroApiUserKey;
+            }
             jQuery.ajax({
                 url : url
             })
             .success(function(xml){
-                if (hasSubCollections(entry)) {
-                    $modal.modal('hide');
-                    // if there are collections we send them
-                    console.log("has sub collections");
-                    $collectionModal = createCollectionModal(xml);
+                if (hasCollections(xml)) { // we get the collection modal
+                    $collectionModal = createCollectionModal(userType, xml);
                     jQuery('body').append($collectionModal);
+                    $modal.modal('hide');
                     $collectionModal.modal();
-                } else {
-                    // else we get the items
-                    console.log("has no sub collections");
-                    var url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/"+itemKey+"/items";
+                } else { // we get the items modal
+                    url = url.replace(itemKey+"/collections", itemKey+"/items");
                     jQuery.ajax({
                         url : url
                     })
                     .success(function(xml){
-                        $modal.modal('hide');
                         // we need the items modal
+                        $modal.modal('hide');
                         $itemsModal = createItemsModal(xml);
                         jQuery('body').append($itemsModal);
                         var options = { valueNames: ['author', 'title', 'date'] };
@@ -99,6 +95,33 @@ function createCollectionModal(xml) {
     });
 
     $modal.find('.modal-body').append($table);
+
+    // create the go back to the choice modal button
+    var $goBackButton = jQuery('<button type="button" class="btn btn-primary">Revenir à la fenêtre de choix</button>');
+    $modal.find('.modal-footer').prepend($goBackButton);
+
+    $goBackButton.on('click', function() {
+        // set the ajax-loader
+        $modal.find('.modal-footer').addClass("ajax-loading");
+        // set user id and key
+        var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/groups?key="+zoteroApiUserKey;
+        console.log(url);
+        jQuery.ajax({
+            url : url
+        })
+        .success(function(xml){
+            $modal.modal('hide');
+            $choiceModal = createChoiceModal(xml);
+            jQuery('body').append($choiceModal);
+            $choiceModal.modal();
+        })
+        .error(function(jqXHR, desc, errorThrown){
+            $modal.modal('hide');
+            $errorModal = createErrorModal();
+            jQuery('body').append($errorModal);
+            $errorModal.modal();
+        });
+    });
 
     $modal.on('hidden.bs.modal', function (e) {
         jQuery(this).remove();

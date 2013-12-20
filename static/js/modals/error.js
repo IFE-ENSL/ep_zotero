@@ -1,7 +1,7 @@
 /**
  * Create the error modal
  */
-function createErrorModal() {
+function createErrorModal(errorMessage) {
 
     // create the modal
     var $modal = jQuery(
@@ -13,10 +13,10 @@ function createErrorModal() {
                         '<h4 class="modal-title" id="error">Une erreur est survenue</h4>'+
                     '</div>'+
                     '<div class="modal-body">'+
-                        'error'+
+                        'Il est possible que vos identifiants soient erronés ou que l\'api zotero soit indisponible actuellement.'+
                     '</div>'+
                     '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                        '<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>'+
                     '</div>'+
                 '</div>'+
             '</div>'+
@@ -24,7 +24,7 @@ function createErrorModal() {
     );
 
     // create the retry button
-    var $retryButton = jQuery('<button type="button" class="btn btn-primary">Retry</button>');
+    var $retryButton = jQuery('<button type="button" class="btn btn-primary">Se reconnecter</button>');
     $modal.find('.modal-footer').append($retryButton);
 
     // display the form-modal on click on retry

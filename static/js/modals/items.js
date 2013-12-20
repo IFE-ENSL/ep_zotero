@@ -5,7 +5,6 @@
  */
 function createItemsModal(xml) {
 
-    console.log(xml);
     // create the modal
     var $modal = jQuery(
         '<div class="modal fade" id="success-modal" role="dialog" aria-labelledby="success" aria-hidden="true">'+
@@ -79,7 +78,6 @@ function createItemsModal(xml) {
                     // insert the reference at the cursor location
                     var text = "[ZoteroKey"+itemKey+"]";
                     ace.ace_replaceRange(rep.selStart, rep.selStart, text);
-                    console.log(ace);
                     $modal.modal('hide');
                 });
             });
@@ -87,6 +85,30 @@ function createItemsModal(xml) {
     });
 
     $modal.find('.modal-body').append($list);
+
+    // create the go back to the choice modal button
+    var $goBackButton = jQuery('<button type="button" class="btn btn-primary">Revenir à la fenêtre de choix</button>');
+    $modal.find('.modal-footer').prepend($goBackButton);
+
+    $goBackButton.on('click', function() {
+        $modal.find('.modal-footer').addClass("ajax-loading");
+        var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/groups?key="+zoteroApiUserKey;
+        jQuery.ajax({
+            url : url
+        })
+        .success(function(xml){
+            $modal.modal('hide');
+            $choiceModal = createChoiceModal(xml);
+            jQuery('body').append($choiceModal);
+            $choiceModal.modal();
+        })
+        .error(function(jqXHR, desc, errorThrown){
+            $modal.modal('hide');
+            $errorModal = createErrorModal();
+            jQuery('body').append($errorModal);
+            $errorModal.modal();
+        });
+    });
 
     $modal.on('hidden.bs.modal', function (e) {
         jQuery(this).remove();
