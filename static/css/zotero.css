@@ -16,6 +16,11 @@
     overflow-y: auto;
 }
 
+.modal h5
+{
+    font-weight: bold;
+}
+
 .modal .modal-body label
 {
     padding-right: 20px;
@@ -29,7 +34,7 @@
 
 .modal .ajax-loading
 {
-    background: url("/static/plugins/ep_zotero/static/images/ajax-loader.gif") no-repeat 344px;
+    background: url("/static/plugins/ep_zotero/static/images/ajax-loader.gif") no-repeat center;
 }
 .modal .groups-libraries
 {

@@ -24,8 +24,9 @@ function createApiZoteroFormModal() {
     // create the form
     var $apiZoteroForm = jQuery(
         '<form>'+
-            '<label>Votre identifiant API</label><input type="text" name="user_api_id" value="'+zoteroApiUserId+'"/><br />'+
-            '<label>Votre clé API</label><input type="text" name="user_api_key" value="'+zoteroApiUserKey+'"/>'+
+            '<p><label>Votre identifiant API (userID)</label><input type="text" name="user_api_id" value="'+zoteroApiUserId+'"/></p>'+
+            '<p><label>Votre clé API (api key)</label><input type="text" name="user_api_key" value="'+zoteroApiUserKey+'"/></p>'+
+            '<p><em class="help-link"><a href="#">Comment récupérer ces identifiants?</a></em></p>'+
         '</form>'
     );
     $formModal.find('.modal-body').append($apiZoteroForm);
@@ -35,12 +36,12 @@ function createApiZoteroFormModal() {
     $formModal.find('.modal-footer').append($apiCallButton);
 
     $apiCallButton.on('click', function() {
-        // set the ajax-loader
         $formModal.find('.modal-footer').addClass("ajax-loading");
         // set user id and key
         zoteroApiUserId = $apiZoteroForm.find('*[name="user_api_id"]').val();   // 1714010
         zoteroApiUserKey = $apiZoteroForm.find('*[name="user_api_key"]').val(); // Dm8ucI67hW83jEY5Ah1aypoD
         var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/groups?key="+zoteroApiUserKey;
+        console.log(url);
         jQuery.ajax({
             url : url
         })

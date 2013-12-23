@@ -78,3 +78,13 @@ function getEntryGroupId(entry) {
 
     return groupId;
 }
+
+/**
+ * Get the number of items of a collection
+ */
+function getNumItems(entry) {
+    var numItem = jQuery(entry).find('zapi\\:numItems, numItems').text();
+
+    return numItem;
+}
+

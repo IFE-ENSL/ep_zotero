@@ -3,7 +3,7 @@
  *
  * Display a list of items in a modal
  */
-function createItemsModal(xml) {
+function createItemsModal(xml, collectionTitle) {
 
     // create the modal
     var $modal = jQuery(
@@ -12,7 +12,7 @@ function createItemsModal(xml) {
                 '<div class="modal-content">'+
                     '<div class="modal-header">'+
                         '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
-                        '<h4 class="modal-title" id="success">Liste de références</h4>'+
+                        '<h4 class="modal-title" id="success">Liste de références - '+collectionTitle+'</h4>'+
                     '</div>'+
                     '<div class="modal-body"></div>'+
                     '<div class="modal-footer">'+
@@ -93,6 +93,7 @@ function createItemsModal(xml) {
     $goBackButton.on('click', function() {
         $modal.find('.modal-footer').addClass("ajax-loading");
         var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/groups?key="+zoteroApiUserKey;
+        console.log(url);
         jQuery.ajax({
             url : url
         })

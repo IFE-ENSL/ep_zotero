@@ -32,20 +32,21 @@ function createChoiceModal(xml) {
      * If the xml contains entries, there are collections so we load the collection modal
      * Else we load the items modal to display items directly
      */
-    function loadAppropriateModal(userType, url, xml) {
+    function loadAppropriateModal(userType, url, xml, title) {
         if (hasCollections(xml)) { // we get the collection modal
-            $collectionModal = createCollectionModal(userType, xml);
+            $collectionModal = createCollectionModal(userType, xml, url, 0 , title);
             jQuery('body').append($collectionModal);
             $modal.modal('hide');
             $collectionModal.modal();
         } else { // we get the items
             url = url.replace('collections/top', 'items');
+            console.log(url);
             jQuery.ajax({
                 url : url
             })
             .success(function(xml){
                 // we need the items modal
-                $itemsModal = createItemsModal(xml);
+                $itemsModal = createItemsModal(xml, title);
                 jQuery('body').append($itemsModal);
                 var options = { valueNames: ['author', 'title', 'date'] };
                 var modalList = new List('modal-list', options);
@@ -70,11 +71,12 @@ function createChoiceModal(xml) {
         $modal.find('.modal-footer').addClass("ajax-loading");
         // collection or items
         var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/collections/top?key="+zoteroApiUserKey;
+        console.log(url);
         jQuery.ajax({
             url : url
         })
         .success(function(xml){
-            loadAppropriateModal("users", url, xml);
+            loadAppropriateModal("users", url, xml, "ma bibliothèque");
         })
         .error(function(jqXHR, desc, errorThrown){
             $modal.modal('hide');
@@ -109,13 +111,13 @@ function createChoiceModal(xml) {
         // ajax request on click
         $browseButton.on('click', function () {
             $modal.find('.modal-footer').addClass("ajax-loading");
-            zoteroGroupId = jQuery(this).attr("data-group-id");
             var url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/top";
+            console.log(url);
             jQuery.ajax({
                 url : url
             })
             .success(function(xml){
-                loadAppropriateModal("groups", url, xml);
+                loadAppropriateModal("groups", url, xml, entryTitle);
             })
             .error(function(jqXHR, desc, errorThrown){
                 $modal.modal('hide');
