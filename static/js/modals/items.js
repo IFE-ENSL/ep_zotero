@@ -42,49 +42,53 @@ function createItemsModal(xml, collectionTitle) {
         '</table>'
     ));
 
-    // add rows to the table
-    jQuery(xml).find("entry").each(function(index) {
+    if (!jQuery(xml).find("entry").length) {
+        $modal.find('.modal-body').append("Aucune référence n'est disponible");
+    } else {
+        // add rows to the table
+        jQuery(xml).find("entry").each(function(index) {
 
-        // do not handle attachments entries
-        var itemType = getEntryItemType(this);
-        if (itemType != 'attachments') {
+            // do not handle attachments entries
+            var itemType = getEntryItemType(this);
+            if (itemType != 'attachments') {
 
-            // get the needed info from xml
-            var entryTitle = getEntryTitle(this);
-            var date = getEntryDate(this);
-            var authorName = getEntryAuthorName(this);
-            var itemKey = getEntryItemKey(this);
-            var url = getEntryUrl(this);
+                // get the needed info from xml
+                var entryTitle = getEntryTitle(this);
+                var date = getEntryDate(this);
+                var authorName = getEntryAuthorName(this);
+                var itemKey = getEntryItemKey(this);
+                var url = getEntryUrl(this);
 
-            // add a row
-            $list.find('tbody.list').append(
-                '<tr>'+
-                    '<td class="title">'+entryTitle+'</td>'+
-                    '<td class="author">'+authorName+'</td>'+
-                    '<td class="date">'+date+'</td>'+
-                '</tr>'
-            );
+                // add a row
+                $list.find('tbody.list').append(
+                    '<tr>'+
+                        '<td class="title">'+entryTitle+'</td>'+
+                        '<td class="author">'+authorName+'</td>'+
+                        '<td class="date">'+date+'</td>'+
+                    '</tr>'
+                );
 
-            // create the insert button
-            var $insertButton = jQuery('<td><button type="button" class="btn btn-primary insert_reference" data-key="'+itemKey+'">Insérer</button></td>');
-            $list.find('tbody.list').find('tr').last().append($insertButton);
+                // create the insert button
+                var $insertButton = jQuery('<td><button type="button" class="btn btn-primary insert_reference" data-key="'+itemKey+'">Insérer</button></td>');
+                $list.find('tbody.list').find('tr').last().append($insertButton);
 
-            // insert the reference on click
-            $insertButton.on('click', function () {
-                var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
-                padeditor.ace.callWithAce(function (ace) {
-                    // rep contains informations about the cursor location
-                    rep = ace.ace_getRep();
-                    // insert the reference at the cursor location
-                    var text = "[ZoteroKey"+itemKey+"]";
-                    ace.ace_replaceRange(rep.selStart, rep.selStart, text);
-                    $modal.modal('hide');
+                // insert the reference on click
+                $insertButton.on('click', function () {
+                    var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
+                    padeditor.ace.callWithAce(function (ace) {
+                        // rep contains informations about the cursor location
+                        rep = ace.ace_getRep();
+                        // insert the reference at the cursor location
+                        var text = "[ZoteroKey"+itemKey+"]";
+                        ace.ace_replaceRange(rep.selStart, rep.selStart, text);
+                        $modal.modal('hide');
+                    });
                 });
-            });
-        }
-    });
+            }
+        });
+        $modal.find('.modal-body').append($list);
+    }
 
-    $modal.find('.modal-body').append($list);
 
     // create the go back to the choice modal button
     var $goBackButton = jQuery('<button type="button" class="btn btn-primary">Revenir à la fenêtre de choix</button>');

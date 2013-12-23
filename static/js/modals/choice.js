@@ -15,8 +15,8 @@ function createChoiceModal(xml) {
                         '<h4 class="modal-title" id="choice">Parcourir vos bibliothèques</h4>'+
                     '</div>'+
                     '<div class="modal-body">'+
-                        '<div class="user-library"><h4>Ma bibliothèque</h4></div>'+
-                        '<div class="groups-libraries"><h4>Bibliothèques de groupes</h4></div>'+
+                        '<div class="user-library"><h5>Ma bibliothèque</h5></div>'+
+                        '<div class="groups-libraries"><h5>Bibliothèques de groupes</h5></div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
                         '<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>'+
@@ -111,6 +111,7 @@ function createChoiceModal(xml) {
         // ajax request on click
         $browseButton.on('click', function () {
             $modal.find('.modal-footer').addClass("ajax-loading");
+            zoteroGroupId = jQuery(this).attr("data-group-id");
             var url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/top";
             console.log(url);
             jQuery.ajax({

@@ -26,10 +26,20 @@ function createApiZoteroFormModal() {
         '<form>'+
             '<p><label>Votre identifiant API (userID)</label><input type="text" name="user_api_id" value="'+zoteroApiUserId+'"/></p>'+
             '<p><label>Votre clé API (api key)</label><input type="text" name="user_api_key" value="'+zoteroApiUserKey+'"/></p>'+
-            '<p><em class="help-link"><a href="#">Comment récupérer ces identifiants?</a></em></p>'+
         '</form>'
     );
     $formModal.find('.modal-body').append($apiZoteroForm);
+
+    // create the help link
+    var $helpLink = jQuery('<p><em class="help-link"><a class="help-link" href="#">Comment récupérer ces identifiants?</a></em></p>');
+    $apiZoteroForm.append($helpLink);
+
+    $helpLink.on('click', function() {
+        $formModal.modal('hide');
+        $helpModal = createHelpModal();
+        jQuery('body').append($helpModal);
+        $helpModal.modal();
+    });
 
     // create the validation button
     var $apiCallButton = jQuery('<button type="button" class="btn btn-primary">Validate</button>');
