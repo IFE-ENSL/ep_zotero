@@ -51,9 +51,9 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
             $modal.find('.modal-footer').addClass("ajax-loading");
             var url = "error";
             if (userType == "groups") {
-                url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/"+itemKey+"/collections";
+                url = "https://api.zotero.org/groups/"+zoteroGroupId+"/collections/"+itemKey+"/collections?end=true";
             } else if (userType == "users") {
-                url = "https://api.zotero.org/users/"+zoteroApiUserId+"/collections/"+itemKey+"/collections?key="+zoteroApiUserKey;
+                url = "https://api.zotero.org/users/"+zoteroApiUserId+"/collections/"+itemKey+"/collections?end=true&key="+zoteroApiUserKey;
             }
             console.log(url);
             jQuery.ajax({
@@ -101,8 +101,8 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
     $table.prepend('<h5>Collections</h5>');
     // add the list of items if there are any
     if (numItems > 0) {
-        url = url.replace("/collections$", "/items");
-        url = url.replace("/collections?", "/items?");
+        url = url.replace("/collections\?end=true", "/items?");
+        console.log(url);
         jQuery.ajax({
             url : url
         })
@@ -156,8 +156,18 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
                         padeditor.ace.callWithAce(function (ace) {
                             // rep contains informations about the cursor location
                             rep = ace.ace_getRep();
+                            console.log(ace);
                             // insert the reference at the cursor location
-                            var text = "[ZoteroKey"+itemKey+"]";
+                            var text =
+                            '[ZoteroReference]'+
+                            '{'+
+                                '"key": "'+itemKey+'",'+
+                                '"date": "'+entryDate+'",'+
+                                '"title": "'+entryTitle+'",'+
+                                '"author": "'+authorName+'",'+
+                                '"location": "unknown",'+
+                                '"editor": "unknown"'+
+                            '}';
                             ace.ace_replaceRange(rep.selStart, rep.selStart, text);
                             $modal.modal('hide');
                         });

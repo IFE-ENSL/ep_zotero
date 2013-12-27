@@ -37,6 +37,18 @@ function createHelpModal() {
         '</div>'
     );
 
+    // create the retry button
+    var $retryButton = jQuery('<button type="button" class="btn btn-primary">Se connecter</button>');
+    $modal.find('.modal-footer').append($retryButton);
+
+    // display the form-modal on click on retry
+    $retryButton.on('click', function () {
+        $modal.modal('hide');
+        var $formModal = createApiZoteroFormModal();
+        jQuery('body').append($formModal);
+        $formModal.modal();
+    });
+
     $modal.on('hidden.bs.modal', function (e) {
         jQuery(this).remove();
     });

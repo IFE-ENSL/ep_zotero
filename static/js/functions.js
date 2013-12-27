@@ -28,7 +28,7 @@ function getEntryTitle(entry) {
  * Format the existing date
  */
 function getEntryDate(entry) {
-    var date = jQuery(entry).find('published').text();
+    var date = jQuery(entry).find('content tr.date td').text();
     var splittedDate = date.split('T');
 
     return splittedDate[0];

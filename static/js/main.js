@@ -41,6 +41,8 @@ jQuery(document).ready(function () {
     zoteroGroupId = '';
     zoteroApiUserId = '1714010';
     zoteroApiUserKey = 'Dm8ucI67hW83jEY5Ah1aypoD';
+
+    // add zotero button action
     jQuery(".zoteroButton").on('click', function () {
         var $formModal = createApiZoteroFormModal();
         jQuery('body').append($formModal);
