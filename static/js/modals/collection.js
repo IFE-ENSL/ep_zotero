@@ -125,14 +125,14 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
 
             // add rows to the table
             jQuery(xml).find("entry").each(function(index){
-
+                console.log(this);
                 // do not handle attachments entries
                 var itemType = getEntryItemType(this);
                 if (itemType != 'attachments') {
 
                     // get the needed info from xml
                     var entryTitle = getEntryTitle(this);
-                    var date = getEntryDate(this);
+                    var entryDate = getEntryDate(this);
                     var authorName = getEntryAuthorName(this);
                     var itemKey = getEntryItemKey(this);
                     var url = getEntryUrl(this);
@@ -142,7 +142,7 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
                         '<tr>'+
                             '<td class="title">'+entryTitle+'</td>'+
                             '<td class="author">'+authorName+'</td>'+
-                            '<td class="date">'+date+'</td>'+
+                            '<td class="date">'+entryDate+'</td>'+
                         '</tr>'
                     );
 
@@ -154,24 +154,25 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
                     $insertButton.on('click', function (){
                         var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
                         padeditor.ace.callWithAce(function (ace) {
-                            // rep contains informations about the cursor location
-                            rep = ace.ace_getRep();
-                            console.log(ace);
-                            // insert the reference at the cursor location
-                            var text =
-                            '[ZoteroReference]'+
-                            '{'+
-                                '"key": "'+itemKey+'",'+
-                                '"date": "'+entryDate+'",'+
-                                '"title": "'+entryTitle+'",'+
-                                '"author": "'+authorName+'",'+
-                                '"location": "unknown",'+
-                                '"editor": "unknown"'+
-                            '}';
-                            ace.ace_replaceRange(rep.selStart, rep.selStart, text);
-                            $modal.modal('hide');
+                            var json =
+                                '{'+
+                                    '"key": "'+itemKey+'",'+
+                                    '"date": "'+entryDate+'",'+
+                                    '"title": "'+entryTitle+'",'+
+                                    '"author": "'+authorName+'",'+
+                                    '"location": "unknown",'+
+                                    '"editor": "unknown"'+
+                                '}';
+                                var text = "("+authorName+", "+entryDate+")";
+                                // rep contains informations about the cursor location
+                                rep = ace.ace_getRep();
+                                start = rep.selStart;
+                                end = [rep.selStart[0], rep.selStart[1]+text.length];
+                                ace.ace_replaceRange(rep.selStart, rep.selStart, text);
+                                ace.ace_doInsertReference(json);
+                                $modal.modal('hide');
+                            },'insertReference' , true);
                         });
-                    });
                 }
             });
 

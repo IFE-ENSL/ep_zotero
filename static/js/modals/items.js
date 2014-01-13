@@ -85,16 +85,12 @@ function createItemsModal(xml, collectionTitle) {
                             '"location": "unknown",'+
                             '"editor": "unknown"'+
                         '}';
+                        var text = "("+authorName+", "+entryDate+")";
                         // rep contains informations about the cursor location
-                        /*rep = ace.ace_getRep();
+                        rep = ace.ace_getRep();
                         start = rep.selStart;
                         end = [rep.selStart[0], rep.selStart[1]+text.length];
                         ace.ace_replaceRange(rep.selStart, rep.selStart, text);
-                        // insert the reference at the cursor location
-                        console.log(ace);
-                        console.log(docAttr);
-                        console.log(start);
-                        console.log(end);*/
                         ace.ace_doInsertReference(json);
                         $modal.modal('hide');
                     },'insertReference' , true);
