@@ -54,7 +54,7 @@ function createItemsModal(xml, collectionTitle) {
 
                 // get the needed info from xml
                 var entryTitle = getEntryTitle(this);
-                var date = getEntryDate(this);
+                var entryDate = getEntryDate(this);
                 var authorName = getEntryAuthorName(this);
                 var itemKey = getEntryItemKey(this);
                 var url = getEntryUrl(this);
@@ -64,7 +64,7 @@ function createItemsModal(xml, collectionTitle) {
                     '<tr>'+
                         '<td class="title">'+entryTitle+'</td>'+
                         '<td class="author">'+authorName+'</td>'+
-                        '<td class="date">'+date+'</td>'+
+                        '<td class="date">'+entryDate+'</td>'+
                     '</tr>'
                 );
 
@@ -76,19 +76,33 @@ function createItemsModal(xml, collectionTitle) {
                 $insertButton.on('click', function () {
                     var padeditor = require('ep_etherpad-lite/static/js/pad_editor').padeditor;
                     padeditor.ace.callWithAce(function (ace) {
+                        var json =
+                        '{'+
+                            '"key": "'+itemKey+'",'+
+                            '"date": "'+entryDate+'",'+
+                            '"title": "'+entryTitle+'",'+
+                            '"author": "'+authorName+'",'+
+                            '"location": "unknown",'+
+                            '"editor": "unknown"'+
+                        '}';
                         // rep contains informations about the cursor location
-                        rep = ace.ace_getRep();
-                        // insert the reference at the cursor location
-                        var text = "[ZoteroKey"+itemKey+"]";
+                        /*rep = ace.ace_getRep();
+                        start = rep.selStart;
+                        end = [rep.selStart[0], rep.selStart[1]+text.length];
                         ace.ace_replaceRange(rep.selStart, rep.selStart, text);
+                        // insert the reference at the cursor location
+                        console.log(ace);
+                        console.log(docAttr);
+                        console.log(start);
+                        console.log(end);*/
+                        ace.ace_doInsertReference(json);
                         $modal.modal('hide');
-                    });
+                    },'insertReference' , true);
                 });
             }
         });
         $modal.find('.modal-body').append($list);
     }
-
 
     // create the go back to the choice modal button
     var $goBackButton = jQuery('<button type="button" class="btn btn-primary">Revenir à la fenêtre de choix</button>');

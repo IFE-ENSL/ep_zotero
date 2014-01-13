@@ -2,7 +2,13 @@
   "parts": [
     {
       "name": "zotero",
+      "client_hooks": {
+        "aceInitialized": "ep_zotero/static/js/hooks",
+        "aceCreateDomLine": "ep_zotero/static/js/hooks",
+        "aceAttribsToClasses": "ep_zotero/static/js/hooks"
+      },
       "hooks": {
+        "collectContentPost": "ep_zotero/static/js/shared",
         "eejsBlock_styles": "ep_zotero/hooks",
         "eejsBlock_editbarMenuRight": "ep_zotero/hooks",
         "eejsBlock_scripts": "ep_zotero/hooks"
