@@ -48,8 +48,10 @@ function createApiZoteroFormModal() {
     $apiCallButton.on('click', function() {
         $formModal.find('.modal-footer').addClass("ajax-loading");
         // set user id and key
-        zoteroApiUserId = $apiZoteroForm.find('*[name="user_api_id"]').val();   // 1714010
-        zoteroApiUserKey = $apiZoteroForm.find('*[name="user_api_key"]').val(); // Dm8ucI67hW83jEY5Ah1aypoD
+        zoteroApiUserId = $apiZoteroForm.find('*[name="user_api_id"]').val();
+        zoteroApiUserKey = $apiZoteroForm.find('*[name="user_api_key"]').val();
+        localStorage.setItem('zoteroApiUserKey', zoteroApiUserKey);
+        localStorage.setItem('zoteroApiUserId', zoteroApiUserId);
         var url = "https://api.zotero.org/users/"+zoteroApiUserId+"/groups?key="+zoteroApiUserKey;
         console.log(url);
         jQuery.ajax({

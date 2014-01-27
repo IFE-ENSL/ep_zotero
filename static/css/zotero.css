@@ -1,6 +1,6 @@
-.zoteroButton >a > .buttonicon
+.zoteroButton > a > .buttonicon
 {
-    background-image: url('../../static/images/zotero.png');
+    background-image: url('/static/plugins/ep_zotero/static/images/zotero.png');
 }
 
 .test

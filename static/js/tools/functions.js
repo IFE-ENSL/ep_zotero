@@ -38,7 +38,7 @@ function getEntryDate(entry) {
  * Get the entry author
  */
 function getEntryAuthorName(entry) {
-    var authorName = jQuery(entry).find('author').first().find('name').first().text();
+    var authorName = jQuery(entry).find('content tr.creator td').text();
 
     return authorName;
 }

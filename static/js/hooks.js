@@ -4,7 +4,7 @@ var _ = require('ep_etherpad-lite/static/js/underscore');
 
 /**
  * aceAttribsToClasses
- * 
+ *
  * Set the zotero-reference:'json' class where the zotero_ref attribute is set
  */
 function aceAttribsToClasses(hook, context){
@@ -23,22 +23,19 @@ function aceCreateDomLine(name, context){
     var referenceType = /zotero-reference:\{.*\}/.exec(cls); // check if the line contains the wanted class
     if (referenceType) {
         var tag = 'zotero-reference:';
-        var author, date;
+        var author, date, title;
         var jsonString = referenceType[0].substring(tag.length);
         var jsonObj = $.parseJSON(jsonString);
         var dataLine = "";
         for (key in jsonObj) {
-            if (key == 'author') {
-                author = jsonObj[key];
-            }
-            if (key == 'date') {
-                date = jsonObj[key];
-            }
+            if (key === 'author') { author = jsonObj[key]; }
+            if (key === 'date') { date = jsonObj[key]; }
+            if (key === 'title') { title = jsonObj[key]; }
             dataLine += 'data-'+key+'="'+jsonObj[key]+'" ';
         }
 
         var modifier = {
-          extraOpenTags: '<em '+dataLine+'>',
+          extraOpenTags: '<em title="'+title+', '+date+'"; style="background: url(\'/static/plugins/ep_zotero/static/images/zotero.png\') no-repeat left; padding-left: 20px;" '+dataLine+'>',
           extraCloseTags: '</em>',
           cls: cls
         };
