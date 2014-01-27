@@ -1,14 +1,17 @@
-This plugin is not ready yet.
+ep_zotero
+=========
 
-Steps
-=====
+An etherpad plugin used to insert zotero references in the editor.
 
-  * Click on the button
-  * A modal appear. The modal have a form asking for api key and api user id. The user fill up the form and validate
-  * An ajax request is made
-      If the request fails, an error modal appear. If the request is a success an other modal appear with the list of references with a link. The user click on a link. The date and author are inserted on the pad. A flag should identify the reference (for later use)
+Installation
+------------
 
-Todo
-====
+You just have to clone the plugin in the plugins directory (node_modules) of your etherpad server.
 
-check http://stackoverflow.com/questions/17933424/jquery-bootstrap-multiple-modals-how-to-hide-active-top-modal-only
+```sh
+git clone https://github.com/IDCI-Consulting/ep_zotero.git /etherpad/directory.../node_modules/ep_zotero
+```
+
+Make sure to name the plugin directory **ep_zotero**  
+
+Restart your etherpad server, that's it!
