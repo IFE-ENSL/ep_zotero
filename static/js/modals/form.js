@@ -86,7 +86,7 @@ function createApiZoteroFormModal() {
         });
     });
 
-    var $deleteLocalStorageButton = jQuery('<button type="button" class="btn btn-default delete-ids">Supprimer mes identifiants</button>');
+    var $deleteLocalStorageButton = jQuery('<button type="button" class="btn btn-default delete-ids">Supprimer la sauvegarde<br/> de mes identifiants</button>');
     $formModal.find('p.storage').append($deleteLocalStorageButton);
     $deleteLocalStorageButton.on('click', function() {
         /*$apiZoteroForm.find('*[name="user_api_id"]').attr('value', '');
