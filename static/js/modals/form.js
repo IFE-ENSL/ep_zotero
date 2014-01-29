@@ -42,7 +42,7 @@ function createApiZoteroFormModal() {
     });
 
     // create the validation button
-    var $apiCallButton = jQuery('<button type="button" class="btn btn-primary">Validate</button>');
+    var $apiCallButton = jQuery('<button type="button" class="btn btn-primary">Valider</button>');
     $formModal.find('.modal-footer').append($apiCallButton);
 
     $apiCallButton.on('click', function() {
