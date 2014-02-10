@@ -9,7 +9,7 @@
       },
       "hooks": {
         "eejsBlock_styles": "ep_zotero/hooks",
-        "eejsBlock_editbarMenuRight": "ep_zotero/hooks",
+        "eejsBlock_editbarMenuLeft": "ep_zotero/hooks",
         "eejsBlock_scripts": "ep_zotero/hooks"
       }
     }

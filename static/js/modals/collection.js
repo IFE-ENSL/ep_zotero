@@ -163,6 +163,8 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
                                     '"location": "unknown",'+
                                     '"editor": "unknown"'+
                                 '}';
+                                if (authorName === "") { authorName = "AUTEUR"; }
+                                if (entryDate === "") { entryDate = "ANNEE"; }
                                 var text = "("+authorName+", "+entryDate+")";
                                 // rep contains informations about the cursor location
                                 rep = ace.ace_getRep();

@@ -1,6 +1,6 @@
 var eejs = require('ep_etherpad-lite/node/eejs');
 
-exports.eejsBlock_editbarMenuRight = function(hook_name, args, callback) {
+exports.eejsBlock_editbarMenuLeft = function(hook_name, args, callback) {
   args.content = args.content + eejs.require("ep_zotero/templates/editbarButtons.ejs", {}, module);
   return callback();
 };
