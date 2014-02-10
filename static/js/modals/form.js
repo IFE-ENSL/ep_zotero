@@ -43,15 +43,34 @@ function createApiZoteroFormModal() {
     );
     $formModal.find('.modal-body').append($apiZoteroForm);
 
+    var $help = jQuery(
+        '<div class="help">'+
+            '<h5>Récupérer vos identifiants Zotero</h5>'+
+            '<p>Pour pouvoir récupérer vos références bibliographiques depuis le pad, vous devez autoriser l\'application. Voici la démarche à suivre</p>'+
+            '<section>'+
+                '<ul>'+
+                    '<li>Connectez-vous sur <a target="_blank" href="https://www.zotero.org/user/login/">Zotero</a></li>'+
+                    '<li>Puis, allez sur la page de <a target="_blank" href="https://www.zotero.org/settings/keys">configuration des clés API</a><br />'+
+                        'Sur cette page, vous pouvez déjà récupérer votre <strong>userID</strong><br /><br />'+
+                        '<img src="/static/plugins/ep_zotero/static/images/zotero_api_page.png"/>'+
+                    '</li>'+
+                    '<li>Ensuite, allez sur la page de <a target="_blank" href="https://www.zotero.org/settings/keys/new">création de clé</a><br />'+
+                        'Ajoutez une description (par exemple pad_ens), et cochez <strong>Allow library access</strong>. Sauvegardez la clé. Vous pouvez ensuite récupérer la clé créée.<br /><br />'+
+                        '<img src="/static/plugins/ep_zotero/static/images/zotero_create_api_key.png"/>'+
+                    '</li>'+
+                '</ul>'+
+            '</section>'+
+        '</div>'
+    );
+
     // create the help link
     var $helpLink = jQuery('<p><em class="help-link"><a class="help-link" href="#">Comment récupérer ces identifiants?</a></em></p>');
     $apiZoteroForm.append($helpLink);
+    // append help text
+    $formModal.find('.modal-body').append($help);
 
     $helpLink.find('a').on('click', function() {
-        $formModal.modal('hide');
-        $helpModal = createHelpModal();
-        jQuery('body').append($helpModal);
-        $helpModal.modal();
+        $formModal.find('.help').toggleClass('active');
     });
 
     // create the validation button

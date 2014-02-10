@@ -61,6 +61,17 @@
     font-style: italic;
 }
 
+.modal .help
+{
+    display: none;
+}
+.modal .help.active
+{
+    display: block;
+}
+
+
+
 .delete-ids
 {
     padding: 1px 5px;
