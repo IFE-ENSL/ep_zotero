@@ -35,6 +35,16 @@ function getEntryDate(entry) {
 }
 
 /**
+ * Get the entry year
+ */
+function getEntryYear(entry) {
+    var date = getEntryDate(entry);
+    var year = date.substring(0,4);
+
+    return year;
+}
+
+/**
  * Get the entry author
  */
 function getEntryAuthorName(entry) {

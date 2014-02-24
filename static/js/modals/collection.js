@@ -132,7 +132,7 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
 
                     // get the needed info from xml
                     var entryTitle = getEntryTitle(this);
-                    var entryDate = getEntryDate(this);
+                    var entryYear = getEntryYear(this);
                     var authorName = getEntryAuthorName(this);
                     var itemKey = getEntryItemKey(this);
                     var url = getEntryUrl(this);
@@ -142,7 +142,7 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
                         '<tr>'+
                             '<td class="title">'+entryTitle+'</td>'+
                             '<td class="author">'+authorName+'</td>'+
-                            '<td class="date">'+entryDate+'</td>'+
+                            '<td class="date">'+entryYear+'</td>'+
                         '</tr>'
                     );
 
@@ -157,15 +157,15 @@ function createCollectionModal(userType, xml, url, numItems, collectionTitle) {
                             var json =
                                 '{'+
                                     '"key": "'+itemKey+'",'+
-                                    '"date": "'+entryDate+'",'+
+                                    '"date": "'+entryYear+'",'+
                                     '"title": "'+entryTitle+'",'+
                                     '"author": "'+authorName+'",'+
                                     '"location": "unknown",'+
                                     '"editor": "unknown"'+
                                 '}';
                                 if (authorName === "") { authorName = "AUTEUR"; }
-                                if (entryDate === "") { entryDate = "ANNEE"; }
-                                var text = "("+authorName+", "+entryDate+")";
+                                if (entryYear === "") { entryYear = "ANNEE"; }
+                                var text = "("+authorName+", "+entryYear+")";
                                 // rep contains informations about the cursor location
                                 rep = ace.ace_getRep();
                                 start = rep.selStart;

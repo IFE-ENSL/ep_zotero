@@ -35,7 +35,7 @@ function aceCreateDomLine(name, context){
         }
 
         var modifier = {
-          extraOpenTags: '<em title="'+title+', '+date+'"; style="background: url(\'/static/plugins/ep_zotero/static/images/zotero.png\') no-repeat left; padding-left: 20px;" '+dataLine+'>',
+          extraOpenTags: '<em title="'+title+', '+date+'"; style="background: url(\'../static/plugins/ep_zotero/static/images/zotero.png\') no-repeat left; padding-left: 20px;" '+dataLine+'>',
           extraCloseTags: '</em>',
           cls: cls
         };

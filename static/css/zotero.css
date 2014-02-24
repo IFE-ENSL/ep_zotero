@@ -1,6 +1,6 @@
 .zoteroButton > a > .buttonicon
 {
-    background-image: url('/static/plugins/ep_zotero/static/images/zotero.png');
+    background-image: url('../images/zotero.png');
 }
 
 .test
@@ -47,7 +47,7 @@
 
 .modal .ajax-loading
 {
-    background: url("/static/plugins/ep_zotero/static/images/ajax-loader.gif") no-repeat center;
+    background: url("../images/ajax-loader.gif") no-repeat center;
 }
 .modal .groups-libraries
 {

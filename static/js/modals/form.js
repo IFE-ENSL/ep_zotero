@@ -45,7 +45,6 @@ function createApiZoteroFormModal() {
 
     var $help = jQuery(
         '<div class="help">'+
-            '<h5>Récupérer vos identifiants Zotero</h5>'+
             '<p>Pour pouvoir récupérer vos références bibliographiques depuis le pad, vous devez autoriser l\'application. Voici la démarche à suivre</p>'+
             '<section>'+
                 '<ul>'+
@@ -70,6 +69,11 @@ function createApiZoteroFormModal() {
     $formModal.find('.modal-body').append($help);
 
     $helpLink.find('a').on('click', function() {
+        if ($helpLink.find('a').text() === "Comment récupérer ces identifiants?") {
+            $helpLink.find('a').text("Cacher l'aide");
+        } else {
+            jQuery('.help-link').find('a').text("Comment récupérer ces identifiants?");
+        }
         $formModal.find('.help').toggleClass('active');
     });
 
