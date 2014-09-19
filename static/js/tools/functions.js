@@ -13,14 +13,7 @@ function hasCollections(xml) {
  * Fixes errors when the text contains single quote & remove html tags from titles
  */
 function getEntryTitle(entry) {
-    var entryTitle = jQuery(entry).find('title').text();
-    var cleanEntryTitle = entryTitle.replace("\'","\\\'");
-
-    if (cleanEntryTitle != '') {
-        return cleanEntryTitle;
-    } else {
-        return entryTitle;
-    }
+    return jQuery(entry).find('title').text();
 }
 
 /**
