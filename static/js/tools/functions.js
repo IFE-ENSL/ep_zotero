@@ -1,6 +1,18 @@
 // UTILS
 
 /**
+ * Replace all occurences of a string
+ *
+ * @param string
+ * @param find
+ * @param replace
+ * @returns string
+ */
+function replaceAll(string, find, replace) {
+    return string.replace(new RegExp(find, 'g'), replace);
+}
+
+/**
  * Has collections
  * Check whether or not a group, user or collection has sub collections
  */
@@ -13,7 +25,12 @@ function hasCollections(xml) {
  * Fixes errors when the text contains single quote & remove html tags from titles
  */
 function getEntryTitle(entry) {
-    return jQuery(entry).find('title').text();
+
+    var entryTitle = jQuery(entry).find('title').text();
+    // escape double quotes
+    var cleanEntryTitle = replaceAll(entryTitle, "\"", "\\\"");
+
+    return cleanEntryTitle;
 }
 
 /**
